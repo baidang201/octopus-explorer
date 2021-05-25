@@ -5,7 +5,7 @@ import { ApolloProvider } from '@apollo/client/react'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 const client = new ApolloClient({
-    uri: 'http://18.220.126.27:3000/',
+    uri: 'https://subql-dev.dmb.top/',
     cache: new InMemoryCache({ resultCaching: false })
 })
 
