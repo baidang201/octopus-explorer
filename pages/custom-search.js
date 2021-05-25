@@ -26,24 +26,31 @@ export default function CustomSearch() {
             variables: { id: blockHash }
         })
 
-        return rt.data
+        if (rt.data.block) {
+            return rt.data.block.id
+        }
+
+        return rt.data.block
     }
 
-    async function FetchBlockByNum(blockHeight) {
+    async function FetchBlockByNum(blockNumber) {
         const rt = await client.query({
             query: gql`
                 query blockdetail($number: BigFloat!) {
-                    block(
-                        number: $number
-                    ){
-                        id
+                    blocks(filter: {number: {equalTo: $number}}) {
+                        nodes {
+                            id
+                        }
                     }
                     }
             `,
-            variables: { number: blockHeight }
+            variables: { number: blockNumber }
         })
 
-        return rt.data
+        if (rt.data.blocks.nodes[0]) {
+            return rt.data.blocks.nodes[0].id
+        }
+        return rt.data.blocks.nodes[0]
     }
 
     async function fetchTxByHash(hash) {
@@ -61,7 +68,10 @@ export default function CustomSearch() {
             variables: { id: hash }
         })
 
-        return rt.data
+        if (rt.data.extrinsic) {
+            return rt.data.extrinsic.id
+        }
+        return rt.data.extrinsic
     }
 
     // 判断输入类型
@@ -69,7 +79,7 @@ export default function CustomSearch() {
         if (regex.isNum(str)) {
             const blockResult = await FetchBlockByNum(str)
             if (blockResult) {
-                return 'blockHeight'
+                return 'blockNumber'
             }
         }
         // 检查是不是合法hash
@@ -94,35 +104,36 @@ export default function CustomSearch() {
     }
 
     async function onSearch(value) {
-        const type = await checkInputType(value)
+        const newValue = value.trim()
+        const type = await checkInputType(newValue)
         // // 跳转到区块页
-        // if (type === 'blockHeight') {
-        //     router.push({
-        //         pathname: '/blockdetail/[blocknumber]',
-        //         query: { blocknumber: value }
-        //     })
-        // }
-        // if (type === 'blockHash') {
-        //     router.push({
-        //         pathname: '/blockdetail/[blockhash]',
-        //         query: { blockhash: value }
-        //     })
-        // }
+        if (type === 'blockNumber') {
+            router.push({
+                pathname: '/blockdetailbynumber/[number]',
+                query: { number: newValue }
+            })
+        }
+        if (type === 'blockHash') {
+            router.push({
+                pathname: '/blockdetailbyhash/[hash]',
+                query: { hash: newValue }
+            })
+        }
         // // 跳转到交易页
-        // if (type === 'transaction') {
-        //     router.push({
-        //         pathname: '/txdetail/[hash]',
-        //         query: { hash: value }
-        //     })
-        // }
+        if (type === 'transaction') {
+            router.push({
+                pathname: '/txdetail/[hash]',
+                query: { hash: newValue }
+            })
+        }
 
         // 跳转到用户页
         // if (type == "account") {
         //   this.$router
         //     .push({
-        //       path: "/accountDetails",
+        //       pathname: "/accountdetail/[account]",
         //       query: {
-        //         account: this.searchInput,
+        //         account: this.value,
         //       },
         //     })
         //     .catch((err) => {});

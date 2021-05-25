@@ -11,18 +11,16 @@ export default function BlockDetail() {
     const client = useApolloClient()
 
     const router = useRouter();
-    const { blocknumber } = router.query;
-    console.log("####blocknumber params: ", blocknumber)
+    const { number } = router.query;
 
     //高度，交易数 时间 
     useEffect(() => {
         async function loadBlockData() {
             const rt = await client.query({
                 query: gql`
-                query blockdetail {
-                    block(
-                        id: "0x001a41eddf358e72da65577bf4c3d1ad0d5625fd8309f26288aa194046020765"
-                    ){
+                query blockdetailbynumber($number: BigFloat!)  {
+                    blocks(filter: {number: {equalTo: $number}}) {
+                        nodes {
                             id
                             number
                             parentHash
@@ -35,15 +33,14 @@ export default function BlockDetail() {
                                 }
                             }
                         }
+                        }
                     }
-                `
+                `,
+                variables: { number: number }
             })
 
-            console.log("####block detail rt", rt );
-
-            setDataSource(rt.data.block)
-            setLoading(false)
-
+            setDataSource(rt.data.blocks.nodes[0])
+            
             if (dataSource.extrinsics) {
                 let stringList = []
                 dataSource.extrinsics.nodes.forEach(item => {
@@ -52,6 +49,7 @@ export default function BlockDetail() {
 
                 setExtrinsicsString( stringList.join() )
             }
+            setLoading(false)
         }
 
         loadBlockData()
