@@ -39,9 +39,9 @@ export default function BlockDetail() {
 
             setDataSource(rt.data.block)
 
-            if (dataSource.extrinsics) {
+            if (rt.data.blocks.nodes[0].extrinsics) {
                 let stringList = []
-                dataSource.extrinsics.nodes.forEach(item => {
+                rt.data.blocks.nodes[0].extrinsics.nodes.forEach(item => {
                     stringList.push(item.method.concat("\t\t\t\t\t\t    ", item.args, "\t\t\t\t\t\t    ", item.timestamp, "\n") )
                 });
 
