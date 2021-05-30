@@ -6,6 +6,7 @@ import { DownOutlined } from '@ant-design/icons'
 import RealtimeTxs from './realtime-txs'
 import RealtimeBlocks from './realtime-blocks'
 import CustomSearch from './custom-search'
+import Globalinfo from './globalinfo'
 
 const { Header, Footer, Content } = Layout
 
@@ -48,7 +49,7 @@ export default function Home() {
                         <CustomSearch/>
                     </Row>
                     <Row justify="center">
-                        <div>最终区块：9999， 交易总数： 9999， 账户总数：9999 </div>
+                        <Globalinfo></Globalinfo>
                     </Row>
                 </Layout>
 
