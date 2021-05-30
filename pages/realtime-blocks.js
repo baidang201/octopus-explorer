@@ -3,12 +3,14 @@ import { useState, useEffect } from 'react'
 import { Table, Row } from 'antd'
 import { gql } from '@apollo/client'
 import { useApolloClient } from '@apollo/react-hooks'
+import Link from 'next/link'
 
 const columns = [
     {
         title: '区块高度',
         dataIndex: 'number',
-        key: 'number'
+        key: 'number',
+        render: (data) => <Link href={{pathname: '/blockdetailbynumber/[number]', query: { number: data }}}>{data}</Link>
     },
     {
         title: '交易数',
