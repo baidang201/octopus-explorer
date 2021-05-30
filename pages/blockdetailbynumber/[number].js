@@ -7,6 +7,7 @@ import { useApolloClient } from '@apollo/react-hooks'
 export default function BlockDetail() {
     const [dataSource, setDataSource] = useState([])
     const [extrinsicsString, setExtrinsicsString] = useState("")
+    const [eventsString, setEventsString] = useState("")
     const [loading, setLoading] = useState(true)
     const client = useApolloClient()
 
@@ -24,12 +25,19 @@ export default function BlockDetail() {
                             id
                             number
                             parentHash
+                            specVersion
                             timestamp
                             extrinsics {
                                 nodes {
                                     method
                                     args
                                     timestamp
+                                }
+                            }
+                            events {
+                                nodes {
+                                    method
+                                    data
                                 }
                             }
                         }
@@ -49,6 +57,16 @@ export default function BlockDetail() {
 
                 setExtrinsicsString( stringList.join() )
             }
+
+            if (rt.data.blocks.nodes[0].events) {
+                let stringList = []
+                rt.data.blocks.nodes[0].events.nodes.forEach(item => {
+                    stringList.push(item.method.concat("\t\t\t\t\t\t    ", item.data) )
+                });
+
+                setEventsString( stringList.join() )
+            }
+
             setLoading(false)
         }
 
@@ -67,11 +85,18 @@ export default function BlockDetail() {
                     Height:      &nbsp;   {dataSource.number}<br/>
                     Block Hash:  &nbsp;   {dataSource.id}<br/>
                     Parent Hash: &nbsp;   {dataSource.parentHash}<br/>
+                    specVersion: &nbsp;   {dataSource.specVersion}<br/>
                     Block Time:  &nbsp;   {dataSource.timestamp}<br/>
                     <br/>
                     extrinsics 列表<br/>
                     方法   &nbsp;  参数    &nbsp;   时间戳<br/>
                     {extrinsicsString}
+                    <br/>
+                    <br/>
+
+                    events 列表<br/>
+                    方法   &nbsp;  数据    &nbsp;<br/>
+                    {eventsString}
                 </div>)
                 : ('block not found')
             )}
