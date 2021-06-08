@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import { Table, Row } from 'antd'
 import { gql } from '@apollo/client'
 import { useApolloClient } from '@apollo/react-hooks'
@@ -7,10 +7,16 @@ import Link from 'next/link'
 
 const columns = [
     {
+        title: '哈希',
+        dataIndex: 'key',
+        key: 'key',
+        render: (data) => <Link href={{ pathname: '/txdetail/[hash]', query: { hash: data } }}>{data && data.substring(0, 10) + "..."}</Link>
+    },
+    {
         title: '区块高度',
         dataIndex: 'number',
         key: 'number',
-        render: (data) => <Link href={{pathname: '/blockdetailbynumber/[number]', query: { number: data }}}>{data}</Link>
+        render: (data) =>  <Link href={{ pathname: '/blockdetailbynumber/[number]', query: { number: data } }}>{data}</Link>
     },
     {
         title: '方法',
